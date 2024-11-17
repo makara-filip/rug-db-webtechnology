@@ -36,47 +36,55 @@ def index():
 @app.route('/add_movie', methods=['GET', 'POST'])
 def add_movie():
     movie = None
-
-    if request.method == "POST":
-        movie_id = request.body.id
-        
-        if movie_id:
+    
+    if request.method == "GET":
+        if "id" in request.args:
             # Fetch the movie by ID if it exists
+            movie_id = request.args["id"]
             movie = Movie.query.get(movie_id)
-            if movie:
-                # get values for existing movie from HTML
-                [...]
-            else:
+            if not movie:
                 return "Movie not found.", 404
-        else:
-            # the HTTP Method is POST
-            # Add new movie if no ID is provided
-            movie = Movie(
-                name=request.body.name,
-                year=request.body.year,
-                awards=request.body.awards
-            )
+        return render_template("add_movie.html", movie=movie)
 
-        db.session.add(movie)
-        db.session.commit()
-        return redirect(url_for('index'))
-
-    # Check if editing an existing movie via query parameter - pass to add values in add_movie page (optional)
-    [...]
+    # else, the method is POST
+    movie_id = request.form["id"]
     if movie_id:
-        [...]
+        # Edit the existing movie
+        # movie_id = request.form["id"]
+        movie = Movie.query.get(movie_id)
+        if movie is None:
+            return "Movie not found.", 404
+        
+        movie.name = request.form["name"]
+        movie.year = request.form["year"]
+        movie.awards = request.form["awards"]
+    else:
+        # Create a new Movie entry
+        movie = Movie(
+            name=request.form["name"],
+            year=request.form["year"],
+            awards=request.form["awards"]
+        )
 
-    return render_template('add_movie.html', movie=movie)
+    db.session.add(movie)
+    db.session.commit()
+    return redirect(url_for('add_movie', id=movie.id))
 
-@app.route('/delete_movie/<int:id>', methods=['POST'])
-def delete_movie(id):
+@app.route('/delete_movie', methods=['POST'])
+def delete_movie():
+    if "id" not in request.args:
+        return "Movie id not specified", 400
+    
     # Get the movie by ID
-    [...]    
+    movie_id = request.args["id"]
+    movie = Movie.query.get(movie_id)
+    if not movie:
+        return "Movie not found", 404
     
     try:
         # Delete the movie from the database
-        [...]
-
+        db.session.delete(movie)
+        db.session.commit()
         return redirect(url_for('index'))
     except:
         return "There was a problem deleting that movie.", 500
