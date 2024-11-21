@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movies</title>
+</head>
+<body>
+    <h1>Movie Database Home</h1>
+
+    {% if current_user.is_authenticated %}
+        <section>
+            <p>Welcome, {{ current_user.username }}!</p>
+            <a href="/logout">Log out</a>
+        </section>
+    {% else %}
+        <section>
+            <p>
+                Please
+                <a href="/login">Sign in</a>
+                or
+                <a href="/register">Register</a>
+                to continue.
+            </p>
+        </section>
+    {% endif %}
+
+</body>
+</html>

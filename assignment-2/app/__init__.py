@@ -13,6 +13,7 @@ login_manager = LoginManager(app)
 # Configure SQLite database
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + database_absolute_file_path
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
+app.config["SECRET_KEY"] = "qwerty"
 
 db = SQLAlchemy(app)
 

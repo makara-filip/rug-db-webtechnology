@@ -1,5 +1,6 @@
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
+import sqlalchemy as sa
 
 from app import db, login_manager
 
@@ -23,7 +24,10 @@ class User(UserMixin, db.Model):
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
-    
+
 @login_manager.user_loader
 def load_user(id):
     return db.session.get(User, int(id))
+
+def get_user_by_username(username):
+    return db.session.scalar(sa.select(User).where(User.username == username))
