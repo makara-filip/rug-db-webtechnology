@@ -9,7 +9,7 @@ python3 -m venv .venv
 source .venv/bin/activate
 
 # install dependencies
-python3 -m pip install flask flask-sqlalchemy
+python3 -m pip install flask flask-sqlalchemy flask-login
 
 # ensure you have Sqlite3 installed
 which sqlite3
