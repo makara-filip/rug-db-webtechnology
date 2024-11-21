@@ -4,7 +4,7 @@ import sqlalchemy as sa
 
 from app import app, db
 from app.models import User, get_user_by_username
-from app.forms import LoginForm
+from app.forms import LoginForm, RegistrationForm
 
 @app.route("/")
 @app.route("/index")
@@ -36,3 +36,18 @@ def logout():
     logout_user()
     return redirect(url_for("index"))
     
+@app.route("/registration", methods=["GET", "POST"])
+@app.route("/register", methods=["GET", "POST"])
+def register():
+    if current_user.is_authenticated:
+        return redirect(url_for("index"))
+    
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        user = User(username=form.username.data)
+        user.set_password(form.password.data)
+        db.session.add(user)
+        db.session.commit()
+        return redirect(url_for('login'))
+    
+    return render_template('register.html', form=form)
