@@ -1,11 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Movies</title>
-</head>
-<body>
+{% extends "layout.html" %}
+{% block content %}
     <h1>Movies List</h1>
 
     <ol>
@@ -35,5 +29,4 @@
     <a href="{{ url_for('add_movie') }}">Add a New Movie</a>
 
     <a href="{{ url_for('index') }}">Back to home page</a>
-</body>
-</html>
+{% endblock %}
