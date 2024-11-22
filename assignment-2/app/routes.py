@@ -1,6 +1,7 @@
-from flask import redirect, url_for, render_template, flash, request
+from flask import redirect, url_for, render_template, flash, request, abort
 from flask_login import current_user, login_user, logout_user, login_required
 import sqlalchemy as sa
+from werkzeug.exceptions import NotFound
 
 from app import app, db
 from app.models import User, Movie, get_user_by_username
@@ -69,7 +70,7 @@ def add_movie():
             movie_id = request.args["id"]
             movie = Movie.query.get(movie_id)
             if not movie:
-                return "Movie not found.", 404
+                abort(NotFound.code, description="Movie not found")
         return render_template("add_movie.html", movie=movie)
 
     # else, the method is POST
@@ -78,7 +79,7 @@ def add_movie():
         # Edit the existing movie
         movie = Movie.query.get(movie_id)
         if movie is None:
-            return "Movie not found.", 404
+            abort(NotFound.code, description="Movie not found")
         
         movie.name = request.form["name"]
         movie.year = request.form["year"]
@@ -105,7 +106,7 @@ def delete_movie():
     movie_id = request.args["id"]
     movie = Movie.query.get(movie_id)
     if not movie:
-        return "Movie not found", 404
+        abort(NotFound.code, description="Movie not found")
     
     try:
         # Delete the movie from the database
@@ -114,3 +115,7 @@ def delete_movie():
         return redirect(url_for('movies'))
     except:
         return "There was a problem deleting that movie.", 500
+
+@app.errorhandler(NotFound.code)
+def page_not_found(exception):
+    return render_template('error.html', exception=exception), 404
