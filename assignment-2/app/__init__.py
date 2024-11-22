@@ -9,6 +9,7 @@ print("Database file:", database_absolute_file_path)
 
 app = Flask(__name__)
 login_manager = LoginManager(app)
+login_manager.login_view = "login"
 
 # Configure SQLite database
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + database_absolute_file_path

@@ -13,6 +13,7 @@
             <p>Welcome, {{ current_user.username }}!</p>
             <a href="/logout">Log out</a>
         </section>
+        <a href="{{ url_for('movies') }}">Movie database</a>
     {% else %}
         <section>
             <p>

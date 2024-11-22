@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Movie</title>
+</head>
+<body>
+    {% if not movie %}
+    <h1>Add a New Movie</h1>
+    {% else %}
+    <h1>Edit Movie</h1>
+    {% endif %}
+    
+    <form action="{{ url_for('add_movie')}}" method="post">
+        <input value="{{ movie.id }}" name="id" hidden />
+        
+        <label>
+            Name
+            <input value="{{ movie.name }}" name="name" />
+        </label>
+        <br/>
+        
+        <label>
+            Year of release
+            <input value="{{ movie.year }}" name="year" type="number" />
+        </label>
+        <br/>
+        
+        <label>
+            Awards
+            <input value="{{ movie.awards }}" name="awards" type="number" />
+        </label>
+        <br/>
+
+        <button type="submit">Submit</button>
+        <!-- edit or create button -->
+    </form>
+
+    {% if movie %}
+    <form action="{{ url_for('delete_movie', id=movie.id) }}" method="post">
+        <button type="submit">Delete movie</button>
+    </form>
+    {% endif %}
+
+    <a href="{{ url_for('movies') }}">Back to Movies List</a>
+</body>
+</html>
