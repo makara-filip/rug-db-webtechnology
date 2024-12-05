@@ -37,6 +37,7 @@ class Movie(PaginatedApiMixin, db.Model):
     name = db.Column(db.String, nullable=False)
     year = db.Column(db.Integer, nullable=False)
     awards = db.Column(db.Integer, nullable=False)
+    genre = db.Column(db.String, nullable=True)
 
     def to_dictionary(self):
         return {
@@ -47,13 +48,13 @@ class Movie(PaginatedApiMixin, db.Model):
         }
     
     @staticmethod
-    def get_direct_fields(self):
+    def get_direct_fields():
         return ["name", "year", "awards"]
     @staticmethod
-    def get_required_fields(self):
+    def get_required_fields():
         return ["name", "year", "awards"]
     @staticmethod
-    def get_editable_fields(self):
+    def get_editable_fields():
         return ["name", "year", "awards"]
 
     

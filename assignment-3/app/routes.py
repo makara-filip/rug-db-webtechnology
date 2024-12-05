@@ -84,12 +84,14 @@ def add_movie():
         movie.name = request.form["name"]
         movie.year = request.form["year"]
         movie.awards = request.form["awards"]
+        movie.genre = request.form["genre"]
     else:
         # Create a new Movie entry
         movie = Movie(
             name=request.form["name"],
             year=request.form["year"],
-            awards=request.form["awards"]
+            awards=request.form["awards"],
+            genre=request.form["genre"]
         )
 
     db.session.add(movie)

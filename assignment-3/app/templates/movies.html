@@ -9,6 +9,7 @@
                 <th>Name</th>
                 <th>Year</th>
                 <th>Awards</th>
+                <th>Genre</th>
                 <th>Edit</th>
             </thead>
             {% for movie in movies %}
@@ -17,6 +18,7 @@
                 <td>{{movie.name}}</td>
                 <td>{{movie.year}}</td>
                 <td>{{movie.awards}}</td>
+                <td>{{movie.genre}}</td>
                 <td>
                     <a href="{{ url_for('add_movie', id=movie.id)}}">Edit</a>
                 </td>

@@ -50,5 +50,5 @@ def update_movie(id):
     movie.from_dict(data)
     db.session.add(movie)
     db.session.commit()
-    return movie.to_dictionary(), 204, {"Location": url_for("api.get_movie", id=movie.id) }
+    return movie.to_dictionary(), 200, {"Location": url_for("api.get_movie", id=movie.id) }
 
