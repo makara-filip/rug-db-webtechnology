@@ -27,13 +27,38 @@ class PaginatedApiMixin(object):
         return data
 
 
-class Movie(db.Model):
+class Movie(PaginatedApiMixin, db.Model):
     __table_args__ = {"extend_existing": True}
     __tablename__ = "movies"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
-    year = db.Column(db.Integer)
-    awards = db.Column(db.Integer)
+    year = db.Column(db.Integer, nullable=False)
+    awards = db.Column(db.Integer, nullable=False)
+
+    def to_dictionary(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "year": self.year,
+            "awards": self.awards
+        }
+    
+    @staticmethod
+    def get_direct_fields(self):
+        return ["name", "year", "awards"]
+    @staticmethod
+    def get_required_fields(self):
+        return ["name", "year", "awards"]
+    @staticmethod
+    def get_editable_fields(self):
+        return ["name", "year", "awards"]
+
+    
+    def from_dict(self, data):
+        for field in self.get_direct_fields():
+            if field in data:
+                setattr(self, field, data[field])
+
 
 class User(PaginatedApiMixin, UserMixin, db.Model):
     __table_args__ = {"extend_existing": True}

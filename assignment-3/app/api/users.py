@@ -1,7 +1,8 @@
 from flask import request, url_for, redirect
 
 from app.api import api_blueprint
-from app.api.errors import error_response, not_found_response, bad_request
+from app.api.errors import not_found_response, bad_request
+from app.api.utils import get_pagination_data
 from app.models import User, get_user_by_username
 from app import db
 
@@ -14,8 +15,7 @@ def get_user(id):
 
 @api_blueprint.route('/users', methods=['GET'])
 def get_users():
-    page_index = request.args.get("page", 1, type=int)
-    page_size = min(request.args.get("page_size", 10, type=int), 100)
+    page_index, page_size = get_pagination_data()
     return User.to_collection_dictionary(User.query, page_index, page_size, 'api.get_users')
 
 @api_blueprint.route('/users', methods=['POST'])
@@ -47,13 +47,16 @@ def create_user():
 
 @api_blueprint.route('/users/<int:id>', methods=['PUT'])
 def update_user(id):
+    user: User | None = User.query.get(id)
+    if user is None: return not_found_response()
     data = request.get_json()
 
     for key in data.keys():
         if key not in User.get_editable_fields():
             return bad_request(f"Field ${key} cannot be edited!")
         
-    user: User = User.query.get_or_404(id)
     user.from_dict(data)
+    db.session.add(user)
+    db.session.commit()
     return user.to_dictionary(), 204, {"Location": url_for("api.get_user", id=user.id) }
 
