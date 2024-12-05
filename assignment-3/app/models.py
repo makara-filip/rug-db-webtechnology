@@ -123,7 +123,7 @@ class User(PaginatedApiMixin, UserMixin, db.Model):
     
     @staticmethod
     def get_user_by_token(token):
-        user = db.session.scalar(sa.select(User).where(User.token == token))
+        user = db.session.scalar(sa.select(User).where(User.auth_token == token))
         if user is None: return None
         if user.auth_token_expiration < datetime.datetime.now(): return None
         return user
