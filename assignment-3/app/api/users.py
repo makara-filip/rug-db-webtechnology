@@ -3,10 +3,12 @@ from flask import request, url_for, redirect
 from app.api import api_blueprint
 from app.api.errors import not_found_response, bad_request
 from app.api.utils import get_pagination_data
+from app.api.auth import token_auth
 from app.models import User
 from app import db
 
 @api_blueprint.route('/users/<int:id>', methods=['GET'])
+@token_auth.login_required
 def get_user(id):
     user: User | None = User.query.get(id)
     if not user:
@@ -14,6 +16,7 @@ def get_user(id):
     return user.to_dictionary()
 
 @api_blueprint.route('/users', methods=['GET'])
+@token_auth.login_required
 def get_users():
     page_index, page_size = get_pagination_data()
     return User.to_collection_dictionary(User.query, page_index, page_size, 'api.get_users')
@@ -45,9 +48,11 @@ def create_user():
     return user.to_dictionary(), 201, {"Location": url_for("api.get_user", id=user.id) }
 
 
-@api_blueprint.route('/users/<int:id>', methods=['PUT'])
-def update_user(id):
-    user: User | None = User.query.get(id)
+@api_blueprint.route('/users', methods=['PUT'])
+@token_auth.login_required
+def update_user():
+    # a user can modify only their data, not edit other users
+    user: User = token_auth.current_user()
     if user is None: return not_found_response()
     data = request.get_json()
 

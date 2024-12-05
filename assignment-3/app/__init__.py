@@ -2,6 +2,7 @@ import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
+from flask_migrate import Migrate
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 database_absolute_file_path = os.path.join(basedir, 'database.db')
@@ -17,6 +18,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 app.config["SECRET_KEY"] = "qwerty"
 
 db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 
 
 from app import models, routes, api

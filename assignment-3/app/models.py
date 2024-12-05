@@ -1,3 +1,6 @@
+import datetime
+import secrets
+
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask import url_for
 from flask_login import UserMixin
@@ -59,20 +62,38 @@ class Movie(PaginatedApiMixin, db.Model):
             if field in data:
                 setattr(self, field, data[field])
 
-
 class User(PaginatedApiMixin, UserMixin, db.Model):
     __table_args__ = {"extend_existing": True}
     __tablename__ = "users"
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String, nullable=False)
     password_hash = db.Column(db.String, nullable=False)
-
-    # password-related methods:
+    auth_token = db.Column(db.String(32), nullable=True, unique=True)
+    auth_token_expiration = db.Column(db.DateTime, nullable=True)
+    
+    # password- and auth-related methods:
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
     
+    def get_auth_token(self):
+        now = datetime.datetime.now()
+        if self.auth_token and self.auth_token_expiration > now + datetime.timedelta(minutes=1):
+            # there is at least 1 minute of token validity
+            return self.auth_token
+        
+        TOKEN_VALIDITY_TIME_SPAN = datetime.timedelta(hours=24)
+        self.auth_token = secrets.token_hex(16)
+        self.auth_token_expiration = now + TOKEN_VALIDITY_TIME_SPAN
+        db.session.add(self)
+        return self.auth_token
+
+    def revoke_auth_token(self):
+        now = datetime.datetime.now()
+        self.auth_token_expiration = now - datetime.timedelta(hours=1)
+        db.session.add(self)
+
     # api-related methods:
     def to_dictionary(self):
         data = {
@@ -99,6 +120,13 @@ class User(PaginatedApiMixin, UserMixin, db.Model):
     @staticmethod
     def get_user_by_username(username):
         return db.session.scalar(sa.select(User).where(User.username == username))
+    
+    @staticmethod
+    def get_user_by_token(token):
+        user = db.session.scalar(sa.select(User).where(User.token == token))
+        if user is None: return None
+        if user.auth_token_expiration < datetime.datetime.now(): return None
+        return user
 
 
 @login_manager.user_loader
