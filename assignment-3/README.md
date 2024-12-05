@@ -89,18 +89,19 @@ curl -v --user filip:password http://127.0.0.1:5000/api/tokens -X POST
 After using the token, accessing the list of movies (paginated):
 
 ```bash
-curl -v -H "Authorization: Bearer 0093a9a10c4dd46ed0f306bd71bd4fbe" "http://127.0.0.1:5000/api/movies?page=2&page_size=3"
+curl -v -H "Authorization: Bearer 0093a9a10c4dd46ed0f306bd71bd4fbe" \
+"http://127.0.0.1:5000/api/movies?page=2&page_size=3"
 ```
 
 ```
 > GET /api/movies?page=2&page_size=3 HTTP/1.1
 > Authorization: Bearer 0093a9a10c4dd46ed0f306bd71bd4fbe
-> 
+>
 * Request completely sent off
 < HTTP/1.1 200 OK
 < Content-Type: application/json
 < Content-Length: 420
-< 
+<
 {
   "data": [
     {
@@ -131,8 +132,11 @@ curl -v -H "Authorization: Bearer 0093a9a10c4dd46ed0f306bd71bd4fbe" "http://127.
 ```
 
 Editing movie details (specifically, setting the number of awards for Dunkirk to 300, from original 1 award):
+
 ```bash
-curl -v -H "Authorization: Bearer 0093a9a10c4dd46ed0f306bd71bd4fbe" -H "Content-Type: application/json" "http://127.0.0.1:5000/api/movies/4" -X PUT --data '{"awards":"300"}'
+curl -v -H "Authorization: Bearer 0093a9a10c4dd46ed0f306bd71bd4fbe" \
+-H "Content-Type: application/json" \
+"http://127.0.0.1:5000/api/movies/4" -X PUT --data '{"awards":"300"}'
 ```
 
 ```
@@ -142,12 +146,12 @@ curl -v -H "Authorization: Bearer 0093a9a10c4dd46ed0f306bd71bd4fbe" -H "Content-
 > Authorization: Bearer 0093a9a10c4dd46ed0f306bd71bd4fbe
 > Content-Type: application/json
 > Content-Length: 16
-> 
+>
 < HTTP/1.1 200 OK
 < Content-Type: application/json
 < Content-Length: 68
 < Location: /api/movies/4
-< 
+<
 {
   "awards": 300,
   "id": 4,
@@ -157,8 +161,44 @@ curl -v -H "Authorization: Bearer 0093a9a10c4dd46ed0f306bd71bd4fbe" -H "Content-
 ```
 
 Demonstrating the change is saved to the database:
+
 ![Database table of movies after the Dunkirk award modification](./images/movies.png)
 
 ## Theoretical part: traffic prediction API design
 
-To be continued...
+> You work for a company that develops a traffic prediction app
+> for industrial shipping and transport companies.
+
+1. **Which benefits and risks could it have to provide API access to
+   applications outside of your company?**
+   Benefits would include increased company revenue,
+   as the API access would most likely be paid.
+   Open API will increase company value as more businesses rely on
+   the service.
+   Risks include opening the endpoints for more attackers - vulnerable to
+   Denial of Service attacks and others.
+   Increased demand can also overload servers which might be
+   also used for different purposes.
+   Other entities can also influence the output - when many accounts demand
+   a specific route without actually transporting cargo in real world,
+   honest customers can be uselessly redirected to incorrectly "faster" routes.
+
+2. **Which kinds of data would you provide access to and why?**
+   Traffic flow insights, such as vehicle density or estimated real-time
+   travel times, without exposing individual route plans to disallow
+   re-identification (sources and destinations are sensitive information).
+   The core of the service will calculate the routes based on customer
+   fleet parameters and planned just-in-time arrival.
+
+3. **Which kinds of data would you not provide access to and why?**
+   As mentioned before, individual route queries are sensitive data,
+   so they should remain private. Other sensitive data include customer
+   information or real-time location of the vehicles.
+
+4. **Which kinds of access would you provide for the data?**
+   I would provide access to the service using API, guarded by authentication
+   middleware. API access can smoothly cooperate with the transport companies'
+   digital infrastructure, as they most likely use their proprietary software
+   to manage vehicles and routes. That way, every customer can automate
+   their queries. There can also be a visual user interface for smaller
+   firms or for presentational or marketing purposes.
