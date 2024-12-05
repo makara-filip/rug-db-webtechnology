@@ -18,7 +18,10 @@ app.config["SECRET_KEY"] = "qwerty"
 
 db = SQLAlchemy(app)
 
-from app import models, routes
+
+from app import models, routes, api
+
+app.register_blueprint(api.api_blueprint, url_prefix='/api')
 
 # Create the database and the tables
 with app.app_context():
