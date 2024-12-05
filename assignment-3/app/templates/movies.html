@@ -1,0 +1,32 @@
+{% extends "layout.html" %}
+{% block content %}
+    <h1>Movies List</h1>
+
+    <ol>
+        <table>
+            <thead>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Year</th>
+                <th>Awards</th>
+                <th>Edit</th>
+            </thead>
+            {% for movie in movies %}
+            <tr>
+                <td>{{movie.id}}</td>
+                <td>{{movie.name}}</td>
+                <td>{{movie.year}}</td>
+                <td>{{movie.awards}}</td>
+                <td>
+                    <a href="{{ url_for('add_movie', id=movie.id)}}">Edit</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </ol>
+
+    <!-- Link to add a new movie -->
+    <a href="{{ url_for('add_movie') }}">Add a New Movie</a>
+
+    <a href="{{ url_for('index') }}">Back to home page</a>
+{% endblock %}

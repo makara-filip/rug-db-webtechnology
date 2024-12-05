@@ -1,0 +1,27 @@
+{% extends "layout.html" %}
+{% block content %}
+  <h1>Registration</h1>
+
+  <form action="" method="post">
+    {{ form.hidden_tag() }}
+    <label>
+      {{ form.username.label }}
+      {{ form.username(size=32) }}
+      {{ " ".join(form.username.errors) }}
+    </label>
+    <br />
+    <label>
+      {{ form.password.label }}
+      {{ form.password(size=32) }}
+      {{ " ".join(form.password.errors) }}
+    </label>
+    <br />
+    <label>
+      {{ form.password2.label }}
+      {{ form.password2(size=32) }}
+      {{ " ".join(form.password2.errors) }}
+    </label>
+    <br />
+    <label>{{ form.submit() }}</label>
+  </form>
+{% endblock %}
