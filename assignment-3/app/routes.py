@@ -4,7 +4,7 @@ import sqlalchemy as sa
 from werkzeug.exceptions import NotFound
 
 from app import app, db
-from app.models import User, Movie, get_user_by_username
+from app.models import User, Movie
 from app.forms import LoginForm, RegistrationForm
 
 @app.route("/")
@@ -19,7 +19,7 @@ def login():
 
     form = LoginForm()
     if form.validate_on_submit():
-        user = get_user_by_username(form.username.data)
+        user = User.get_user_by_username(form.username.data)
         if user is None or not user.check_password(form.password.data):
             flash("Invalid username or password.")
             return redirect(url_for("login"))

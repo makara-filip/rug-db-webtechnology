@@ -3,7 +3,7 @@ from flask import request, url_for, redirect
 from app.api import api_blueprint
 from app.api.errors import not_found_response, bad_request
 from app.api.utils import get_pagination_data
-from app.models import User, get_user_by_username
+from app.models import User
 from app import db
 
 @api_blueprint.route('/users/<int:id>', methods=['GET'])
@@ -34,7 +34,7 @@ def create_user():
         return bad_request("Data must include username, password and password2 fields.")
     if password != password:
         return bad_request("Passwords must match.")
-    if get_user_by_username(username) != None:
+    if User.get_user_by_username(username) != None:
         return bad_request("Username already taken.")
     
     user = User()

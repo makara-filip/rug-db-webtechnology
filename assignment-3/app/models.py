@@ -96,10 +96,11 @@ class User(PaginatedApiMixin, UserMixin, db.Model):
             if "password" in data: 
                 self.set_password(data["password"])
 
+    @staticmethod
+    def get_user_by_username(username):
+        return db.session.scalar(sa.select(User).where(User.username == username))
+
 
 @login_manager.user_loader
 def load_user(id):
     return db.session.get(User, int(id))
-
-def get_user_by_username(username):
-    return db.session.scalar(sa.select(User).where(User.username == username))
